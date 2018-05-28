@@ -15,7 +15,7 @@ deploy_key:
 
 .PHONY: ssh
 ssh:
-	ssh -i deploy_key $(BASTION_U_H)
+	ssh -A -i deploy_key $(BASTION_U_H)
 
 .PHONY: clean
 clean:

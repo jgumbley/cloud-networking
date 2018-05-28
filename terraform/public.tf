@@ -34,8 +34,8 @@ resource "aws_security_group" "web" {
   }
 
     egress { # SQL Server
-        from_port = 1433
-        to_port = 1433
+        from_port = 22
+        to_port = 22
         protocol = "tcp"
         cidr_blocks = ["${var.private_subnet_cidr}"]
     }
