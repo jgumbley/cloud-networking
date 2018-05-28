@@ -3,17 +3,11 @@
 */
 resource "aws_security_group" "db" {
     name = "vpc_db"
-    description = "Allow incoming database connections."
+    description = "Allow SSH connections."
 
-    ingress { # SQL Server
-        from_port = 1433
-        to_port = 1433
-        protocol = "tcp"
-        security_groups = ["${aws_security_group.web.id}"]
-    }
-    ingress { # MySQL
-        from_port = 3306
-        to_port = 3306
+    ingress { # SSH
+        from_port = 22
+        to_port = 22
         protocol = "tcp"
         security_groups = ["${aws_security_group.web.id}"]
     }
