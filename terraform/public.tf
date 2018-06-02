@@ -1,8 +1,8 @@
 /*
-  Web Servers
+  Boundary
 */
-resource "aws_security_group" "web" {
-    name = "vpc_web"
+resource "aws_security_group" "boundary" {
+    name = "vpc_boundary"
     description = "Allow incoming HTTP connections."
 
    ingress {
@@ -33,13 +33,13 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    egress { # SQL Server
+    egress {
         from_port = 22
         to_port = 22
         protocol = "tcp"
         cidr_blocks = ["${var.private_subnet_cidr}"]
     }
-    egress { # MySQL
+  egress {
         from_port = 3306
         to_port = 3306
         protocol = "tcp"
@@ -49,22 +49,22 @@ resource "aws_security_group" "web" {
     vpc_id = "${aws_vpc.default.id}"
 
     tags {
-        Name = "WebServerSG"
+        Name = "Boundary"
     }
 }
 
-resource "aws_instance" "web-1" {
+resource "aws_instance" "jump-1" {
     ami = "${lookup(var.amis, var.aws_region)}"
     availability_zone = "eu-west-1a"
     instance_type = "t2.micro"
     key_name = "deployer-key"
-    vpc_security_group_ids = ["${aws_security_group.web.id}"]
+    vpc_security_group_ids = ["${aws_security_group.boundary.id}"]
     subnet_id = "${aws_subnet.eu-west-1a-public.id}"
     associate_public_ip_address = true
     source_dest_check = false
 
     tags {
-        Name = "Web Server 1"
+        Name = "Jump"
     }
 }
 
@@ -74,11 +74,11 @@ resource "aws_key_pair" "deployer" {
 }
 
 
-resource "aws_eip" "web-1" {
-    instance = "${aws_instance.web-1.id}"
+resource "aws_eip" "jump-1" {
+    instance = "${aws_instance.jump-1.id}"
     vpc = true
 }
 
 output "bastion_ip" {
-  value = "${aws_instance.web-1.public_ip}"
+  value = "${aws_instance.jump-1.public_ip}"
 }

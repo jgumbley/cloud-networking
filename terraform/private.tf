@@ -1,7 +1,7 @@
 /*
-  Database Servers
+  Inside Servers
 */
-resource "aws_security_group" "db" {
+resource "aws_security_group" "inside" {
     name = "vpc_db"
     description = "Allow SSH connections."
 
@@ -9,7 +9,7 @@ resource "aws_security_group" "db" {
         from_port = 22
         to_port = 22
         protocol = "tcp"
-        security_groups = ["${aws_security_group.web.id}"]
+        security_groups = ["${aws_security_group.boundary.id}"]
     }
 
     ingress {
@@ -41,16 +41,16 @@ resource "aws_security_group" "db" {
     vpc_id = "${aws_vpc.default.id}"
 
     tags {
-        Name = "DBServerSG"
+        Name = "Inside"
     }
 }
 
-resource "aws_instance" "db-1" {
+resource "aws_instance" "inside-1" {
   ami = "${lookup(var.amis, var.aws_region)}"
   availability_zone = "eu-west-1a"
   instance_type = "t2.micro"
   key_name = "deployer-key"
-  vpc_security_group_ids = ["${aws_security_group.db.id}"]
+  vpc_security_group_ids = ["${aws_security_group.inside.id}"]
   subnet_id = "${aws_subnet.eu-west-1a-private.id}"
   source_dest_check = false
   private_ip = "10.0.1.56"
