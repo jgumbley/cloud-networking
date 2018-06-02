@@ -13,9 +13,13 @@ terraform: deploy_key
 deploy_key:
 	ssh-keygen -t rsa -b 4096 -C "$(shell whoami)@jimssolution" -f ./deploy_key
 
-.PHONY: ssh
-ssh:
+.PHONY: sshe
+sshe:
 	ssh -A -i deploy_key $(BASTION_U_H)
+
+.PHONY: sshi
+sshi:
+	ssh -i ./deploy_key -o "ProxyCommand ssh -W %h:%p -i ./deploy_key $(BASTION_U_H)" centos@10.0.1.56
 
 .PHONY: clean
 clean:
