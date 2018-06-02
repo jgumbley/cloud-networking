@@ -1,0 +1,18 @@
+- hosts: all
+  vars:
+      env: something
+  become: yes
+  become_method: sudo
+  gather_facts: no
+
+  pre_tasks:
+    - name: wait for ssh on 22
+      local_action: wait_for port=22 host='{{ inventory_hostname }}' search_regex=OpenSSH delay=10
+      become: no
+    - name: 'gather facts'
+      setup:
+    - name: 'install updates'
+      yum: name=* update_cache=yes state=latest
+  tasks:
+    - name: 'install htop'
+      yum: name=htop state=latest

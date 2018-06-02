@@ -10,6 +10,10 @@ terraform: deploy_key
 	cd terraform; terraform apply -auto-approve
 	$(call green,"[All steps successful]")
 
+.PHONY: ansible
+ansible:
+	cd ansible; ansible-playbook -u centos -i $(BASTION_IP), setup.yml --private-key ../deploy_key
+
 deploy_key:
 	ssh-keygen -t rsa -b 4096 -C "$(shell whoami)@jimssolution" -f ./deploy_key
 
